@@ -19,6 +19,9 @@
 		47848697133B87663A122E3D /* Pods_YelpTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1000F3975EB43318C1D4FA /* Pods_YelpTests.framework */; };
 		CF6249051E99BB14009925A6 /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6249041E99BB14009925A6 /* SwitchCell.swift */; };
 		CF6249071E99BD7E009925A6 /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6249061E99BD7E009925A6 /* FiltersViewController.swift */; };
+		CFAA999F1E9BF82F0011741C /* CheckCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAA999E1E9BF82F0011741C /* CheckCell.swift */; };
+		CFAA99A11E9BF8620011741C /* DropDownCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAA99A01E9BF8620011741C /* DropDownCell.swift */; };
+		CFAA99A31E9C0CB60011741C /* SeeAllCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAA99A21E9C0CB60011741C /* SeeAllCell.swift */; };
 		CFFD628F1E99427D00EF13AC /* BusinessCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD628E1E99427D00EF13AC /* BusinessCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +56,9 @@
 		C79C0AC126EDAA235847CEA2 /* Pods_Yelp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yelp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF6249041E99BB14009925A6 /* SwitchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
 		CF6249061E99BD7E009925A6 /* FiltersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
+		CFAA999E1E9BF82F0011741C /* CheckCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckCell.swift; sourceTree = "<group>"; };
+		CFAA99A01E9BF8620011741C /* DropDownCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropDownCell.swift; sourceTree = "<group>"; };
+		CFAA99A21E9C0CB60011741C /* SeeAllCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeeAllCell.swift; sourceTree = "<group>"; };
 		CFFD628E1E99427D00EF13AC /* BusinessCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusinessCell.swift; sourceTree = "<group>"; };
 		EF53DC2D7A8303A68532E7C6 /* Pods-Yelp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Yelp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Yelp/Pods-Yelp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -178,6 +184,9 @@
 			children = (
 				CFFD628E1E99427D00EF13AC /* BusinessCell.swift */,
 				CF6249041E99BB14009925A6 /* SwitchCell.swift */,
+				CFAA999E1E9BF82F0011741C /* CheckCell.swift */,
+				CFAA99A01E9BF8620011741C /* DropDownCell.swift */,
+				CFAA99A21E9C0CB60011741C /* SeeAllCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -398,9 +407,12 @@
 			files = (
 				CFFD628F1E99427D00EF13AC /* BusinessCell.swift in Sources */,
 				22AAAA9C1AEA1EC300A544AF /* BusinessesViewController.swift in Sources */,
+				CFAA999F1E9BF82F0011741C /* CheckCell.swift in Sources */,
 				CF6249071E99BD7E009925A6 /* FiltersViewController.swift in Sources */,
+				CFAA99A11E9BF8620011741C /* DropDownCell.swift in Sources */,
 				22AAAA991AEA0A9700A544AF /* Business.swift in Sources */,
 				222D8A7D19CCFAE000D2DB53 /* YelpClient.swift in Sources */,
+				CFAA99A31E9C0CB60011741C /* SeeAllCell.swift in Sources */,
 				222D8A5B19CCF9F900D2DB53 /* AppDelegate.swift in Sources */,
 				CF6249051E99BB14009925A6 /* SwitchCell.swift in Sources */,
 			);

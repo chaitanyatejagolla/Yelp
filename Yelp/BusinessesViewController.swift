@@ -8,73 +8,113 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController,UITableViewDataSource,UITableViewDelegate, UISearchBarDelegate,FiltersViewControllerDelegate {
+class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource , UISearchBarDelegate, FiltersViewControllerDelegate {
     
-    @IBOutlet weak var tableView: UITableView!
-    var businesses: [Business]!
-    var filteredBusinesses = [Business]()
+    var businesses: [Business]! {
+        didSet {
+            searchFilter(searchText: searchBar.text ?? "")
+        }
+    }
+    
+    let searchBar = UISearchBar()
     var searchActive = false
-    
+    var filteredBusinesses: [Business]!
+    var settingFilters: [String: AnyObject] = [String: AnyObject]()
+    var refreshControl: UIRefreshControl = UIRefreshControl()
+    @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.barTintColor = UIColor.red
-        let searchBar = UISearchBar()
-        searchBar.sizeToFit()
-        searchBar.placeholder = "Restaurants"
         navigationItem.titleView = searchBar
-        tableView.delegate = self
-        tableView.dataSource = self
+        searchBar.placeholder = "Restaurants"
+        searchBar.sizeToFit()
         searchBar.delegate = self
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.estimatedRowHeight = 120
+        filteredBusinesses = []
+        settingFilters = [:]
         
-        Business.searchWithTerm(term: "Thai", completion: { (businesses: [Business]?, error: Error?) -> Void in
-            self.businesses = businesses
-            self.tableView.reloadData()
-            if let businesses = businesses {
-                for business in businesses {
-                    print(business.name!)
-                    print(business.address!)
-                }
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.estimatedRowHeight = 120
+        tableView.rowHeight = UITableViewAutomaticDimension
+        
+        refreshControl.addTarget(self, action: #selector(pullDownToRefresh), for: .valueChanged)
+        if #available(iOS 10.0, *) {
+            tableView.refreshControl = refreshControl
+        } else {
+            tableView.addSubview(refreshControl)
+        }
+        
+        if settingFilters.count == 0 {
+            settingFilters["deal_filter"] = false as AnyObject?
+            settingFilters["distance_filter_index"] = 0 as AnyObject?
+            settingFilters["sort_filter"] = 0 as AnyObject?
+            settingFilters["sort_filter_index"] = 0 as AnyObject?
+            settingFilters["distance_filter"] = 0.0 as AnyObject?
+        }
+        updateFilter(filters: settingFilters)
+    }
+    
+    func pullDownToRefresh() {
+        self.updateFilter(filters: self.settingFilters)
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return filteredBusinesses.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BusinessCell") as? BusinessCell
+        cell?.business = businesses[indexPath.row]
+        
+        return cell!
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navigationController = segue.destination as? UINavigationController
+        let filtersViewController = navigationController?.topViewController as? FiltersViewController
+        filtersViewController?.settingfilters = settingFilters
+        filtersViewController?.delegate = self
+        
+    }
+    
+    func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String : AnyObject]) {
+        self.settingFilters = filters
+        updateFilter(filters: filters)
+    }
+    
+    func updateFilter(filters: [String: AnyObject]) {
+        let deals = filters["deal_filter"]  as? Bool
+        let sort = filters["sort_filter"] as? Int
+        let categories = filters["categories_filter"] as? [String: String] ?? [String: String]()
+        
+        let selectedCategories = categories.map {$0.value}
+        var distance = filters["distance_filter"] as? Double ?? 0
+        distance = distance * 1609.344
+        Business.searchWithTerm(term: "Restaurant", sort: YelpSortMode(rawValue: sort!) , categories: selectedCategories, deals: deals, radius: distance) {[weak self] (businesses:[Business]?, error: Error?) in
+            if #available(iOS 10.0, *) {
+                self?.tableView.refreshControl?.endRefreshing()
+            } else {
+                self?.refreshControl.endRefreshing()
             }
             
-            }
-        )
-        
-        /* Example of Yelp search with more search options specified
-         Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
-         self.businesses = businesses
-         
-         for business in businesses {
-         print(business.name!)
-         print(business.address!)
-         }
-         }
-         */
+            self?.businesses = businesses ?? []
+        }
         
     }
-    
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        // When there is no text, filteredData is the same as the original data
-        // When user has entered text into the search box
-        // Use the filter method to iterate over all items in the data array
-        // For each item, return true if the item should be included and false if the
-        // item should NOT be included
-        filteredBusinesses = searchText.isEmpty ? businesses : businesses.filter { (business: Business) -> Bool in
-            // If dataItem matches the searchText, return true to include it
-            return business.name?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil || business.categories?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil || business.address?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
-        }
-        if searchText != ""
-        {
-            searchActive = true
-        }
-        else {
-            searchActive = false
-        }
-        self.tableView.reloadData()
+        searchFilter(searchText: searchText)
     }
-
+    
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchActive = true;
     }
@@ -87,59 +127,35 @@ class BusinessesViewController: UIViewController,UITableViewDataSource,UITableVi
         searchActive = false;
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if businesses != nil{
-            if searchActive{
-                return filteredBusinesses.count
+    func searchFilter(searchText: String) {
+        // When there is no text, filteredData is the same as the original data
+        // When user has entered text into the search box
+        // Use the filter method to iterate over all items in the data array
+        // For each item, return true if the item should be included and false if the
+        // item should NOT be included
+        filteredBusinesses = searchText.isEmpty ? businesses : businesses.filter({ (business: Business) -> Bool in
+            // If dataItem matches the searchText, return true to include it
+            return business.name?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil || business.categories?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil || business.address?.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        })
+            if searchText != ""
+            {
+                searchActive = true
             }
-         return businesses!.count
+            else {
+                searchActive = false
+            }
+            self.tableView.reloadData()
         }
-        else{
-            return 0
-        }
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BusinessCell", for: indexPath) as! BusinessCell
-        if searchActive{
-         cell.business = filteredBusinesses[indexPath.row]
-        }
-        else {
-            cell.business = businesses[indexPath.row]
-        }
-        return cell
-    }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchActive = true
-        searchBar.endEditing(true)
-        self.tableView.reloadData()
-        searchBar.text = ""
-    }
+    /*
      // MARK: - Navigation
      
      // In a storyboard-based application, you will often want to do a little preparation before navigation
-    
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let navigationController = segue.destination as! UINavigationController
-        let filtersViewController = navigationController.topViewController as! FiltersViewController
-        filtersViewController.delegate = self
+     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
      // Get the new view controller using segue.destinationViewController.
      // Pass the selected object to the new view controller.
      }
-    
-    func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String : AnyObject]) {
-        let categories = filters["categories"] as? [String]
-        Business.searchWithTerm(term: "Restaurants", sort:nil, categories: categories, deals:nil) {
-            (businesses: [Business]!, error: Error!) -> Void in
-            self.businesses = businesses
-            self.tableView.reloadData()
-        }
-    }
+     */
     
 }
