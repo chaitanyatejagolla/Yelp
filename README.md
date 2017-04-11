@@ -14,7 +14,7 @@ The following **required** functionality is completed:
    - [X] Search bar should be in the navigation bar (doesn't have to expand to show location like the real Yelp app does).
 - [X] Filter page. Unfortunately, not all the filters are supported in the Yelp API.
    - [X] The filters you should actually have are: category, sort (best match, distance, highest rated), distance, deals (on/off).
-   - [ ] The filters table should be organized into sections as in the mock.
+   - [X] The filters table should be organized into sections as in the mock.
    - [X] You can use the default UISwitch for on/off states.
    - [X] Clicking on the "Search" button should dismiss the filters page and trigger the search w/ the new filter settings.
    - [X] Display some of the available Yelp categories (choose any 3-4 that you want).
@@ -43,7 +43,7 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://media.giphy.com/media/l1BgT1Up1VXmPgWwE/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://media.giphy.com/media/l0IyjBkwHLLCpHynK/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
